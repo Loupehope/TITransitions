@@ -22,7 +22,7 @@
 
 import UIKit
 
-class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
+open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     
     // MARK: - Presentation controller
     private let driver: TransitionDriver?
@@ -44,7 +44,7 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
         super.init()
     }
     
-    func presentationController(forPresented presented: UIViewController,
+    public func presentationController(forPresented presented: UIViewController,
                                 presenting: UIViewController?,
                                 source: UIViewController) -> UIPresentationController? {
         driver?.link(to: presented)
@@ -58,22 +58,22 @@ class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     }
     
     // MARK: - Animation
-    func animationController(forPresented presented: UIViewController,
+    public func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return presentAnimation
     }
     
-    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return dismissAnimation
     }
     
     // MARK: - Interaction
-    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+    public func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return driver
     }
     
-    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+    public func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
         return driver
     }
 }
