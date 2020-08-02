@@ -26,6 +26,14 @@ open class PresentationController: UIPresentationController {
     private let presentStyle: PresentStyle
     private let driver: TransitionDriver?
     
+    override open var shouldPresentInFullscreen: Bool {
+        return false
+    }
+    
+    override open var frameOfPresentedViewInContainerView: CGRect {
+        calculatePresentedFrame(for: presentStyle)
+    }
+    
     public init(driver: TransitionDriver?,
                 presentStyle: PresentStyle,
                 presentedViewController: UIViewController,
@@ -33,14 +41,6 @@ open class PresentationController: UIPresentationController {
         self.driver = driver
         self.presentStyle = presentStyle
         super.init(presentedViewController: presentedViewController, presenting: presenting)
-    }
-    
-    override open var shouldPresentInFullscreen: Bool {
-        return false
-    }
-    
-    override open var frameOfPresentedViewInContainerView: CGRect {
-        calculatePresentedFrame(for: presentStyle)
     }
     
     override open func presentationTransitionWillBegin() {

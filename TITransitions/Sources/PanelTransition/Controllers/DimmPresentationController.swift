@@ -33,6 +33,7 @@ open class DimmPresentationController: PresentationController {
     }()
     
     public init(backgroundColor: UIColor,
+                onTapDismiss: Bool,
                 driver: TransitionDriver?,
                 presentStyle: PresentStyle,
                 presentedViewController: UIViewController,
@@ -42,6 +43,10 @@ open class DimmPresentationController: PresentationController {
                    presentStyle: presentStyle,
                    presentedViewController: presentedViewController,
                    presenting: presenting)
+        
+        if onTapDismiss {
+            configureOnTapClose()
+        }
     }
     
     override open func presentationTransitionWillBegin() {
@@ -83,6 +88,15 @@ open class DimmPresentationController: PresentationController {
         if completed {
             dimmView.removeFromSuperview()
         }
+    }
+    
+    private func configureOnTapClose() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onTapClose))
+        dimmView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func onTapClose() {
+        presentedViewController.dismiss(animated: true, completion: nil)
     }
     
     private func performAlongsideTransitionIfPossible(_ block: @escaping () -> Void) {

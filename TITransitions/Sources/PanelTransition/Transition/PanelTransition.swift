@@ -30,9 +30,11 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private let presentAnimation: PresentAnimation
     private let dismissAnimation: DismissAnimation
     private let backgroundColor: UIColor
+    private let onTapDismiss: Bool
     
     public init(presentStyle: PresentStyle,
                 backgroundColor: UIColor = .black,
+                onTapDismiss: Bool = true,
                 driver: TransitionDriver? = .init(),
                 presentAnimation: PresentAnimation = .init(),
                 dismissAnimation: DismissAnimation = .init()) {
@@ -41,15 +43,17 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
         self.presentAnimation = presentAnimation
         self.dismissAnimation = dismissAnimation
         self.backgroundColor = backgroundColor
+        self.onTapDismiss = onTapDismiss
         super.init()
     }
     
     public func presentationController(forPresented presented: UIViewController,
-                                presenting: UIViewController?,
-                                source: UIViewController) -> UIPresentationController? {
+                                       presenting: UIViewController?,
+                                       source: UIViewController) -> UIPresentationController? {
         driver?.link(to: presented)
         
         let presentationController = DimmPresentationController(backgroundColor: backgroundColor,
+                                                                onTapDismiss: onTapDismiss,
                                                                 driver: driver,
                                                                 presentStyle: presentStyle,
                                                                 presentedViewController: presented,
@@ -59,8 +63,8 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     
     // MARK: - Animation
     public func animationController(forPresented presented: UIViewController,
-                             presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+                                    presenting: UIViewController,
+                                    source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return presentAnimation
     }
     
