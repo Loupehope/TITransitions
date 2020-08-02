@@ -31,11 +31,11 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private let dismissAnimation: DismissAnimation
     private let backgroundColor: UIColor
     
-    init(presentStyle: PresentStyle,
-         backgroundColor: UIColor = .black,
-         driver: TransitionDriver? = .init(),
-         presentAnimation: PresentAnimation = .init(),
-         dismissAnimation: DismissAnimation = .init()) {
+    public init(presentStyle: PresentStyle,
+                backgroundColor: UIColor = .black,
+                driver: TransitionDriver? = .init(),
+                presentAnimation: PresentAnimation = .init(),
+                dismissAnimation: DismissAnimation = .init()) {
         self.presentStyle = presentStyle
         self.driver = driver
         self.presentAnimation = presentAnimation
