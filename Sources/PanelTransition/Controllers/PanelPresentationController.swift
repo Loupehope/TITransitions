@@ -22,29 +22,28 @@
 
 import UIKit
 
-open class DimmPresentationController: PresentationController {
-    private let backgroundColor: UIColor
+open class PanelPresentationController: PresentationController {
+    private let config: Configuration
     
-    private lazy var dimmView: UIView = {
+    private lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = backgroundColor
+        view.backgroundColor = config.backgroundColor
         view.alpha = 0
         return view
     }()
     
-    public init(backgroundColor: UIColor,
-                onTapDismiss: Bool,
+    public init(config: Configuration,
                 driver: TransitionDriver?,
                 presentStyle: PresentStyle,
                 presentedViewController: UIViewController,
                 presenting: UIViewController?) {
-        self.backgroundColor = backgroundColor
+        self.config = config
         super.init(driver: driver,
                    presentStyle: presentStyle,
                    presentedViewController: presentedViewController,
                    presenting: presenting)
         
-        if onTapDismiss {
+        if config.onTapDismissEnabled {
             configureOnTapClose()
         }
     }
@@ -52,25 +51,25 @@ open class DimmPresentationController: PresentationController {
     override open func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
         
-        containerView?.insertSubview(dimmView, at: 0)
+        containerView?.insertSubview(backView, at: 0)
         
         
         performAlongsideTransitionIfPossible { [weak self] in
-            self?.dimmView.alpha = 1
+            self?.backView.alpha = 1
         }
     }
     
     override open func containerViewDidLayoutSubviews() {
         super.containerViewDidLayoutSubviews()
         
-        dimmView.frame = containerView?.frame ?? .zero
+        backView.frame = containerView?.frame ?? .zero
     }
     
     override open func presentationTransitionDidEnd(_ completed: Bool) {
         super.presentationTransitionDidEnd(completed)
         
         if !completed {
-            dimmView.removeFromSuperview()
+            backView.removeFromSuperview()
         }
     }
     
@@ -78,7 +77,7 @@ open class DimmPresentationController: PresentationController {
         super.dismissalTransitionWillBegin()
         
         performAlongsideTransitionIfPossible { [weak self] in
-            self?.dimmView.alpha = .zero
+            self?.backView.alpha = .zero
         }
     }
     
@@ -86,17 +85,17 @@ open class DimmPresentationController: PresentationController {
         super.dismissalTransitionDidEnd(completed)
         
         if completed {
-            dimmView.removeFromSuperview()
+            backView.removeFromSuperview()
         }
     }
     
     private func configureOnTapClose() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onTapClose))
-        dimmView.addGestureRecognizer(tapGesture)
+        backView.addGestureRecognizer(tapGesture)
     }
     
     @objc private func onTapClose() {
-        presentedViewController.dismiss(animated: true, completion: nil)
+        presentedViewController.dismiss(animated: true, completion: config.onTapDismissCompletion)
     }
     
     private func performAlongsideTransitionIfPossible(_ block: @escaping () -> Void) {
@@ -108,5 +107,23 @@ open class DimmPresentationController: PresentationController {
         coordinator.animate(alongsideTransition: { _ in
             block()
         })
+    }
+}
+
+extension PanelPresentationController {
+    public struct Configuration {
+        public let backgroundColor: UIColor
+        public let onTapDismissEnabled: Bool
+        public let onTapDismissCompletion: VoidClosure?
+        
+        public init(backgroundColor: UIColor = UIColor.black.withAlphaComponent(0.4),
+                    onTapDismissEnabled: Bool = true,
+                    onTapDismissCompletion: VoidClosure? = nil) {
+            self.backgroundColor = backgroundColor
+            self.onTapDismissEnabled = onTapDismissEnabled
+            self.onTapDismissCompletion = onTapDismissCompletion
+        }
+        
+        public static let `default` = Configuration()
     }
 }

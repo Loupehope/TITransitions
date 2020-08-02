@@ -47,7 +47,6 @@ open class PresentationController: UIPresentationController {
         super.presentationTransitionWillBegin()
         
         containerView?.addSubview(presentedView!)
-        
     }
     
     override open func containerViewDidLayoutSubviews() {
@@ -77,21 +76,23 @@ private extension PresentationController {
         case .halfScreen:
             let halfHeight = bounds.height / 2
             return CGRect(x: .zero, y: halfHeight, width: bounds.width, height: halfHeight)
-        case let .custom(insets, height):
-            return calculateCustomFrame(insets: insets, height: height)
+        case let .customInsets(insets):
+            return calculateCustomFrame(insets: insets)
+        case let .customHeight(height):
+            return CGRect(x: .zero, y: bounds.height - height, width: bounds.width, height: height)
         }
     }
     
-    func calculateCustomFrame(insets: UIEdgeInsets?, height: CGFloat?) -> CGRect {
+    func calculateCustomFrame(insets: UIEdgeInsets) -> CGRect {
         guard let bounds = containerView?.bounds else {
             return .zero
         }
         
-        let unwrappedInsets = insets ?? .zero
-        let unwrappedHeight = height ?? containerView?.bounds.height ?? .zero
-        let origin = CGPoint(x: unwrappedInsets.left, y: unwrappedHeight + unwrappedInsets.top)
-        let size = CGSize(width: bounds.width - 2 * unwrappedInsets.right,
-                          height: unwrappedHeight - unwrappedInsets.bottom)
+        let origin = CGPoint(x: insets.left, y: insets.top)
+        
+        let size = CGSize(width: bounds.width - insets.right - insets.left,
+                          height: bounds.height - insets.top - insets.bottom)
+
         return CGRect(origin: origin, size: size)
     }
 }

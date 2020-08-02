@@ -16,6 +16,6 @@ let package = Package(
     targets: [
         .target(
             name: "TITransitions",
-            path: "TITransitions/Sources"),
+            path: "Sources"),
     ]
 )
