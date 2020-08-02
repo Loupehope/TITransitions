@@ -25,5 +25,6 @@ import UIKit
 public enum PresentStyle {
     case fullScreen
     case halfScreen
-    case custom(insets: UIEdgeInsets?, height: CGFloat?)
+    case customInsets(UIEdgeInsets)
+    case customHeight(CGFloat)
 }

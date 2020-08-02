@@ -29,10 +29,10 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     private let presentStyle: PresentStyle
     private let presentAnimation: PresentAnimation
     private let dismissAnimation: DismissAnimation
-    private let backgroundColor: UIColor
+    private let panelConfig: PanelPresentationController.Configuration
     
     public init(presentStyle: PresentStyle,
-                backgroundColor: UIColor = .black,
+                panelConfig: PanelPresentationController.Configuration = .default,
                 driver: TransitionDriver? = .init(),
                 presentAnimation: PresentAnimation = .init(),
                 dismissAnimation: DismissAnimation = .init()) {
@@ -40,27 +40,27 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
         self.driver = driver
         self.presentAnimation = presentAnimation
         self.dismissAnimation = dismissAnimation
-        self.backgroundColor = backgroundColor
+        self.panelConfig = panelConfig
         super.init()
     }
     
     public func presentationController(forPresented presented: UIViewController,
-                                presenting: UIViewController?,
-                                source: UIViewController) -> UIPresentationController? {
+                                       presenting: UIViewController?,
+                                       source: UIViewController) -> UIPresentationController? {
         driver?.link(to: presented)
         
-        let presentationController = DimmPresentationController(backgroundColor: backgroundColor,
-                                                                driver: driver,
-                                                                presentStyle: presentStyle,
-                                                                presentedViewController: presented,
-                                                                presenting: presenting ?? source)
+        let presentationController = PanelPresentationController(config: panelConfig,
+                                                                 driver: driver,
+                                                                 presentStyle: presentStyle,
+                                                                 presentedViewController: presented,
+                                                                 presenting: presenting ?? source)
         return presentationController
     }
     
     // MARK: - Animation
     public func animationController(forPresented presented: UIViewController,
-                             presenting: UIViewController,
-                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+                                    presenting: UIViewController,
+                                    source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return presentAnimation
     }
     
