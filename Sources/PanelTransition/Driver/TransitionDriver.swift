@@ -33,8 +33,10 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition {
     public func link(to controller: UIViewController) {
         presentedController = controller
         
-        panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handleGesture))
-        presentedController?.view.addGestureRecognizer(panRecognizer!)
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleGesture))
+        
+        panRecognizer = panGesture
+        presentedController?.view.addGestureRecognizer(panGesture)
     }
     
     // MARK: - Override
@@ -64,12 +66,12 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition {
 // MARK: - Gesture Handling
 private extension TransitionDriver {
     var maxTranslation: CGFloat {
-        return presentedController?.view.frame.height ?? 0
+        presentedController?.view.frame.height ?? 0
     }
     
     /// `pause()` before call `isRunning`
     var isRunning: Bool {
-        return percentComplete != 0
+        percentComplete != 0
     }
     
     func handlePresentation(recognizer: UIPanGestureRecognizer) {

@@ -61,19 +61,19 @@ open class PanelTransition: NSObject, UIViewControllerTransitioningDelegate {
     public func animationController(forPresented presented: UIViewController,
                                     presenting: UIViewController,
                                     source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return presentAnimation
+        presentAnimation
     }
     
     public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return dismissAnimation
+        dismissAnimation
     }
     
     // MARK: - Interaction
     public func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return driver
+        driver
     }
     
     public func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return driver
+        driver
     }
 }

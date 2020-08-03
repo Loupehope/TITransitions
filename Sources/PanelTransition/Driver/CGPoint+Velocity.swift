@@ -25,7 +25,7 @@ import UIKit
 extension UIPanGestureRecognizer {
     func projectedLocation(decelerationRate: UIScrollView.DecelerationRate) -> CGPoint {
         let velocityOffset = velocity(in: view).projectedOffset(decelerationRate: .normal)
-        let projectedLocation = location(in: view!) + velocityOffset
+        let projectedLocation = location(in: view) + velocityOffset
         return projectedLocation
     }
 }

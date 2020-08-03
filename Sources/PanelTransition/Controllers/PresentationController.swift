@@ -27,7 +27,7 @@ open class PresentationController: UIPresentationController {
     private let driver: TransitionDriver?
     
     override open var shouldPresentInFullscreen: Bool {
-        return false
+        false
     }
     
     override open var frameOfPresentedViewInContainerView: CGRect {
@@ -46,7 +46,9 @@ open class PresentationController: UIPresentationController {
     override open func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
         
-        containerView?.addSubview(presentedView!)
+        if let presentedView = presentedView {
+            containerView?.addSubview(presentedView)
+        }
     }
     
     override open func containerViewDidLayoutSubviews() {
