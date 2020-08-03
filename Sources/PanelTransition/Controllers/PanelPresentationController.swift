@@ -52,8 +52,7 @@ open class PanelPresentationController: PresentationController {
         super.presentationTransitionWillBegin()
         
         containerView?.insertSubview(backView, at: 0)
-        
-        
+
         performAlongsideTransitionIfPossible { [weak self] in
             self?.backView.alpha = 1
         }

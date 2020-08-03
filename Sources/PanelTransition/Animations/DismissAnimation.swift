@@ -24,7 +24,7 @@ import UIKit
 
 open class DismissAnimation: BaseAnimation {
     override open func animator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
-        guard let from = transitionContext.view(forKey: .from),
+        guard let fromView = transitionContext.view(forKey: .from),
             let fromController = transitionContext.viewController(forKey: .from) else {
                 return UIViewPropertyAnimator()
         }
@@ -32,7 +32,7 @@ open class DismissAnimation: BaseAnimation {
         let initialFrame = transitionContext.initialFrame(for: fromController)
         
         let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
-            from.frame = initialFrame.offsetBy(dx: .zero, dy: initialFrame.height)
+            fromView.frame = initialFrame.offsetBy(dx: .zero, dy: initialFrame.height)
         }
         
         animator.addCompletion { _ in

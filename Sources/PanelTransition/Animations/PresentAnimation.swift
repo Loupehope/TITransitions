@@ -24,17 +24,17 @@ import UIKit
 
 open class PresentAnimation: BaseAnimation {
     override open func animator(using transitionContext: UIViewControllerContextTransitioning) -> UIViewImplicitlyAnimating {
-        guard let to = transitionContext.view(forKey: .to),
+        guard let toView = transitionContext.view(forKey: .to),
             let toController = transitionContext.viewController(forKey: .to) else {
                 return UIViewPropertyAnimator()
         }
         
         let finalFrame = transitionContext.finalFrame(for: toController)
         
-        to.frame = finalFrame.offsetBy(dx: .zero, dy: finalFrame.height)
+        toView.frame = finalFrame.offsetBy(dx: .zero, dy: finalFrame.height)
         
         let animator = UIViewPropertyAnimator(duration: duration, curve: .easeOut) {
-            to.frame = finalFrame
+            toView.frame = finalFrame
         }
         
         animator.addCompletion { _ in
