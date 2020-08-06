@@ -44,7 +44,7 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition, UIGestureReco
     }
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+                                  shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         true
     }
     
