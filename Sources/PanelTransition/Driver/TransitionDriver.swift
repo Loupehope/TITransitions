@@ -48,7 +48,7 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition, UIGestureReco
         if scrollView?.contentOffset.y ?? 0 < -50 {
             scrollView?.isScrollEnabled = false
             return true
-        } else if scrollView?.contentOffset.y ?? 0 >= -50, otherGestureRecognizer.state == .began {
+        } else if scrollView?.contentOffset.y ?? 0 >= -50, otherGestureRecognizer.state != .possible {
             scrollView?.isScrollEnabled = true
             return false
         } else {
