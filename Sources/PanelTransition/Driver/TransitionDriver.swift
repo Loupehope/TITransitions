@@ -44,15 +44,6 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition, UIGestureReco
         detectScrollView()
     }
     
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer.isEqual(panRecognizer) else {
-            return false
-        }
-        
-        return true
-    }
-    
     // MARK: - Override
     override open var wantsInteractiveStart: Bool {
         get {
@@ -168,7 +159,7 @@ final class ScrollViewUpdater {
     
     // MARK: - Public variables
     
-    var isDismissEnabled = true
+    var isDismissEnabled = false
     
     // MARK: - Private variables
     
