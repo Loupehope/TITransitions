@@ -25,6 +25,7 @@ import UIKit
 open class TransitionDriver: UIPercentDrivenInteractiveTransition {
     private weak var presentedController: UIViewController?
     
+    private var scrollView: UIScrollView?
     private var panRecognizer: UIPanGestureRecognizer?
     
     public var direction: TransitionDirection = .present
@@ -37,6 +38,8 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition {
         
         panRecognizer = panGesture
         presentedController?.view.addGestureRecognizer(panGesture)
+        
+        detectScrollView()
     }
     
     // MARK: - Override
@@ -60,6 +63,10 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition {
         case .dismiss:
             handleDismiss(recognizer: recognizer)
         }
+    }
+    
+    private func detectScrollView() {
+        scrollView = presentedController?.view.subviews.first { $0 is UIScrollView } as? UIScrollView
     }
 }
 
