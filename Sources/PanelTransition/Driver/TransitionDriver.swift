@@ -45,16 +45,13 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition, UIGestureReco
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        otherGestureRecognizer.canBePrevented(by: gestureRecognizer)
-//        if scrollView?.contentOffset.y ?? 0 <= -50 {
-//            scrollView?.isScrollEnabled = false
-//            return true
-//        } else {
-//            scrollView?.isScrollEnabled = true
-//            return false
-//        }
-        
-        return true
+        if scrollView?.contentOffset.y ?? 0 < -50 {
+            otherGestureRecognizer.canBePrevented(by: gestureRecognizer)
+            return true
+        } else {
+            scrollView?.isScrollEnabled = true
+            return false
+        }
     }
     
     // MARK: - Override
