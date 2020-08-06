@@ -168,7 +168,7 @@ final class ScrollViewUpdater {
     
     // MARK: - Public variables
     
-    var isDismissEnabled = false
+    var isDismissEnabled = true
     
     // MARK: - Private variables
     
