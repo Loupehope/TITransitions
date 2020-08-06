@@ -123,6 +123,6 @@ extension PanelPresentationController {
             self.onTapDismissCompletion = onTapDismissCompletion
         }
         
-        public static let `default`: Configuration = .init()
+        public static let `default` = Configuration()
     }
 }

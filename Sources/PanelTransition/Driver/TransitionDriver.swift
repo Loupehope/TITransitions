@@ -27,6 +27,7 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition, UIGestureReco
     
     private var scrollView: UIScrollView?
     private var panRecognizer: UIPanGestureRecognizer?
+    private var scrollViewUpdater: ScrollViewUpdater?
     
     public var direction: TransitionDirection = .present
     
@@ -44,17 +45,12 @@ open class TransitionDriver: UIPercentDrivenInteractiveTransition, UIGestureReco
     }
     
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if scrollView?.contentOffset.y ?? 0 < -50 {
-            scrollView?.isScrollEnabled = false
-            return true
-        } else if scrollView?.contentOffset.y ?? 0 >= -50, otherGestureRecognizer.state != .possible {
-            scrollView?.isScrollEnabled = true
-            return true
-        } else {
-            scrollView?.isScrollEnabled = false
-            return true
+                                  shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard gestureRecognizer.isEqual(panRecognizer) else {
+            return false
         }
+        
+        return true
     }
     
     // MARK: - Override
@@ -126,11 +122,16 @@ private extension TransitionDriver {
             if !isRunning {
                 presentedController?.dismiss(animated: true) // Start the new one
             }
+            
+            if let scrollView = scrollView, let view = presentedController?.view {
+                scrollViewUpdater = ScrollViewUpdater(withRootView: view, scrollView: scrollView)
+            }
         
         case .changed:
             update(percentComplete + recognizer.incrementToBottom(maxTranslation: maxTranslation))
             
         case .ended, .cancelled:
+            scrollViewUpdater = nil
             if recognizer.isProjectedToDownHalf(maxTranslation: maxTranslation) {
                 finish()
             } else {
@@ -161,4 +162,81 @@ private extension UIPanGestureRecognizer {
         let percentIncrement = translation / maxTranslation
         return percentIncrement
     }
+}
+
+final class ScrollViewUpdater {
+    
+    // MARK: - Public variables
+    
+    var isDismissEnabled = false
+    
+    // MARK: - Private variables
+    
+    private weak var rootView: UIView?
+    private weak var scrollView: UIScrollView?
+    private var observation: NSKeyValueObservation?
+    
+    // MARK: - Initializers
+    
+    init(withRootView rootView: UIView, scrollView: UIScrollView) {
+        self.rootView = rootView
+        self.scrollView = scrollView
+        self.observation = scrollView.observe(\.contentOffset, options: [.initial], changeHandler: { [weak self] _, _ in
+            self?.scrollViewDidScroll()
+        })
+    }
+    
+    deinit {
+        observation = nil
+    }
+    
+    // MARK: - Private methods
+    
+    private func scrollViewDidScroll() {
+        guard let rootView = rootView, let scrollView = scrollView else {
+            return
+        }
+        
+        /// Since iOS 11, the "top" position of a `UIScrollView` is not when
+        /// its `contentOffset.y` is 0, but when `contentOffset.y` added to it's
+        /// `safeAreaInsets.top` is 0, so that is adjusted for here.
+        let offset: CGFloat = {
+            if #available(iOS 11, *) {
+                return scrollView.contentOffset.y + scrollView.contentInset.top + scrollView.safeAreaInsets.top
+            } else {
+                return scrollView.contentOffset.y + scrollView.contentInset.top
+            }
+        }()
+        
+        /// If the `scrollView` is not at the top, then do nothing.
+        /// Additionally, dismissal is not allowed.
+        ///
+        /// If the `scrollView` is at the top or beyond, but is decelerating,
+        /// this means that it reached to the top as the result of momentum from
+        /// a swipe. In these cases, in order to retain the "card" effect, we
+        /// move the `rootView` and the `scrollView`'s contents to make it
+        /// appear as if the entire presented card is shifting down.
+        ///
+        /// Lastly, if the `scrollView` is at the top or beyond and isn't
+        /// decelerating, then that means that the user is panning from top to
+        /// bottom and has no more space to scroll within the `scrollView`.
+        /// The pan gesture which controls the dismissal is allowed to take over
+        /// now, and the scrollView's natural bounce is stopped.
+        
+        if offset > 0 {
+            scrollView.bounces = true
+            isDismissEnabled = false
+        } else {
+            if scrollView.isDecelerating {
+                rootView.transform = CGAffineTransform(translationX: 0, y: -offset)
+                scrollView.subviews.forEach {
+                    $0.transform = CGAffineTransform(translationX: 0, y: offset)
+                }
+            } else {
+                scrollView.bounces = false
+                isDismissEnabled = true
+            }
+        }
+    }
+    
 }
